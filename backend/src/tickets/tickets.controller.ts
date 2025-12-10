@@ -2,11 +2,14 @@ import { Controller, Get, Post, Param, Body, Put, Delete, Query } from '@nestjs/
 import { TicketsService } from "./tickets.service";
 import { CreateTicketDto } from "./dto/create-ticket.dto";
 import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { AiService } from 'src/ai/ai.service';
 
 @Controller("tickets")
 export class TicketsController {
 
-  constructor(private readonly ticketsService: TicketsService) {}
+  constructor(
+    private readonly ticketsService: TicketsService,
+    private readonly aiService: AiService) {}
 
   @Get()
   findAll(
@@ -34,6 +37,15 @@ export class TicketsController {
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.ticketsService.delete(id);
+  }
+
+  @Post('analyze')
+  async analyze(
+    @Body('description') desc: string,
+    @Query('provider') provider: 'openai' | 'gemini',
+  ) {
+    const result = await this.aiService.categorizeTicket(desc, provider);
+    return result;
   }
 
 }
