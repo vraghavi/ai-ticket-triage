@@ -8,6 +8,10 @@ export class GeminiClient implements AiClient {
     this.genAI = apiKey ? new GoogleGenAI({apiKey}) : new GoogleGenAI({});
   }
 
+  getModelName(): string {
+    return "gemini-2.5-flash";
+  }
+
   async categorizeTicket(text: string): Promise<string> {
     // const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 

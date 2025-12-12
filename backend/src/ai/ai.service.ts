@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { AiClient, AiProvider } from "./ai.provider";
 import { OpenAiClient } from "./openai.client";
 import { GeminiClient } from "./gemini.client";
+import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class AiService {
@@ -9,7 +10,9 @@ export class AiService {
     private readonly geminiClient?: AiClient;
     private readonly defaultProvider: AiProvider;
 
-    constructor() {
+    constructor(
+        private prisma: PrismaService
+    ) {
         const openAIKey = process.env.OPENAI_API_KEY;
         const geminiKey = process.env.GEMINI_API_KEY;
 
@@ -42,14 +45,32 @@ export class AiService {
 
     async categorizeTicket(
         text: string,
-        provider: AiProvider,
-    ): Promise<{provider: AiProvider; category: string}> {
-        const client = this.pickClient(provider);
+        provider?: AiProvider,
+    ): Promise<{provider: AiProvider; category: string, latency: number}> {
+        const chosenProvider = provider ?? this.defaultProvider;
+        const client = this.pickClient(chosenProvider);
+
+        const start = Date.now();
         const category = await client.categorizeTicket(text);
+        const latency = Date.now() - start;
+
+        const modelName = client.getModelName();
+
+        await this.prisma.aiLog.create({
+            data: {
+                provider: chosenProvider,
+                model: modelName,
+                prompt: text,
+                response: category,
+                category,
+                latencyMs: latency
+            }
+        })
 
         return {
-            provider: provider ?? this.defaultProvider,
+            provider: chosenProvider,
             category,
-        }
+            latency,
+        };
     }
 }

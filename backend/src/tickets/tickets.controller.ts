@@ -25,8 +25,8 @@ export class TicketsController {
   }
 
   @Post()
-  create(@Body() createTicketDto: CreateTicketDto) {
-    return this.ticketsService.create(createTicketDto);
+  async create(@Body() createTicketDto: CreateTicketDto) {
+    return await this.ticketsService.create(createTicketDto);
   }
 
   @Put(':id')

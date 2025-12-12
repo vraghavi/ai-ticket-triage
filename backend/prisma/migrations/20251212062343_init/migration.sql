@@ -10,3 +10,15 @@ CREATE TABLE "Ticket" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
+
+-- CreateTable
+CREATE TABLE "AiLog" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "provider" TEXT NOT NULL,
+    "model" TEXT NOT NULL,
+    "prompt" TEXT NOT NULL,
+    "response" TEXT NOT NULL,
+    "category" TEXT,
+    "latencyMs" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

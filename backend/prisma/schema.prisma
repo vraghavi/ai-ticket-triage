@@ -1,16 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "./generated/client"
+  provider = "prisma-client-js"
 }
 
 model Ticket {
@@ -25,3 +19,13 @@ model Ticket {
   updatedAt   DateTime @updatedAt
 }
 
+model AiLog {
+  id        String   @id @default(uuid())
+  provider  String
+  model     String
+  prompt    String
+  response  String
+  category  String?
+  latencyMs Int
+  createdAt DateTime @default(now())
+}

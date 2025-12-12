@@ -10,6 +10,10 @@ export class OpenAiClient implements AiClient {
         });
     }
 
+    getModelName(): string {
+        return "gpt-4o-mini";
+    }
+
     async categorizeTicket(text: string): Promise<string> {
         const systemPrompt = `
         You are a ticket triage assistant.
